@@ -1,0 +1,43 @@
+.header {
+    background-color: slategray;
+}
+
+.webix_el_label .webix_el_box {
+    color: white;
+    margin: -4px 0px 0px 8px;
+    font-size: 20px;
+}
+
+.webix_transparent .webix_button .webix_icon {
+    color: white;
+    font-size: 20px;
+    vertical-align: text-bottom;
+    margin-right: 2px;
+}
+
+.text {
+    font-size: 20px;
+    color: white;
+}
+
+.webix_template {
+    text-align: center;
+}
+
+.webix_transparent .webix_button {
+    color: green;
+}
+
+.connect {
+    margin-left: 5px;
+}
+.webix_list_item  {
+    background-color:lightgray;
+    font-size: 16px;
+}
+.list_background {
+    background-color:lightgray;
+}
+.webix_el_text {
+    padding: 5px 0;
+}

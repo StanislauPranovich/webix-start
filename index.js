@@ -1,4 +1,4 @@
-var small_film_set = [
+let small_film_set = [
 	{ id: 1, title: "The Shawshank Redemption", year: 1994, votes: 678790, rating: 9.2, rank: 1, category: "Thriller" },
 	{ id: 2, title: "The Godfather", year: 1972, votes: 511495, rating: 9.2, rank: 2, category: "Crime" },
 	{ id: 3, title: "The Godfather: Part II", year: 1974, votes: 319352, rating: 9.0, rank: 3, category: "Crime" },
@@ -7,7 +7,7 @@ var small_film_set = [
 	{ id: 6, title: "12 Angry Men", year: 1957, votes: 164558, rating: 8.9, rank: 6, category: "Western" }
 ];
 
-var header = {
+let header = {
 	cols: [
 		{
 			view: "label",
@@ -15,7 +15,9 @@ var header = {
 		},
 		{
 			view: "button",
-			label: '<span class="webix_icon wxi-user"></span>' + '<span class="text">Profile</span>',
+            type: "icon",
+            icon: "wxi-user",
+            label: "Profile",
 			autowidth: true,
 			css: "webix_transparent"
 		}
@@ -23,7 +25,7 @@ var header = {
 	css: "header"
 };
 
-var mainList = {
+let mainList = {
 	rows: [
 		{
 			view: "list",
@@ -32,26 +34,26 @@ var mainList = {
 		},
 		{},
 		{
-			view: "button",
-			label: "<span class = 'fas fa-check'></span>" + "<span class = 'connect'>Connected</span>",
-			css: "webix_transparent"
+			view: "template",
+			template: "<span class = 'fas fa-check'></span><span class = 'connect'>Connected</span>",
+            autoheight:true,
+            css: "template_style"
 		}
 	],
 	width: 200,
 	css: "list_background",
 };
 
-var mainDataTable = {
+let mainDataTable = {
 	view: "datatable",
 	autoConfig: true,
-	id: "154",
 	data: small_film_set,
 	scroll: false,
 	minWidth: 730,
 	maxWidth: 1060
 };
 
-var mainForm = {
+let mainForm = {
 	view: "form",
 	elements: [
 		{
@@ -83,10 +85,10 @@ var mainForm = {
 	height: 750
 };
 
-var footer = {
+let footer = {
 	view: "template",
-	template: "The software is provided by " + "<a href='https://webix.com'>https://webix.com.</a>" + " All rights reserved (c)",
-	css: "webix_template"
+	template: "The software is provided by <a href='https://webix.com'>https://webix.com.</a> All rights reserved (c)",
+	css: "text-align webix_template"
 };
 
 webix.ui({

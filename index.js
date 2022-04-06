@@ -8,6 +8,8 @@ let small_film_set = [
 ];
 
 let header = {
+	view: "toolbar",
+	css: "webix_dark",
 	cols: [
 		{
 			view: "label",
@@ -19,10 +21,10 @@ let header = {
             icon: "wxi-user",
             label: "Profile",
 			autowidth: true,
-			css: "webix_transparent white_button"
-		}
+			css: "webix_transparent"
+		},
 	],
-	css: "header"
+	padding: 10
 };
 
 let mainList = {
@@ -61,13 +63,11 @@ let mainForm = {
 			rows: [
 				{ template: "Edit Films", type: "section" },
 				{ view: "text", label: "Title"},
-				{ height: 10},
 				{ view: "text", label: "Year"},
-				{ height: 10},
 				{ view: "text", label: "Rating"},
-				{ height: 10},
 				{ view: "text", label: "Votes"},
 			],
+			margin: 10
 		},
 		{
 			cols: [
@@ -85,8 +85,7 @@ let mainForm = {
 		},
 		{},
 	],
-	width: 270,
-	autoheight: true
+	width: 270
 };
 
 let footer = {

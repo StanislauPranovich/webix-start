@@ -1,13 +1,3 @@
-.header {
-    background-color: slategray;
-}
-
-.webix_el_label .webix_el_box {
-    color: white;
-    margin: -4px 0px 0px 8px;
-    font-size: 20px;
-}
-
 .webix_transparent .webix_button .webix_icon {
     color: white;
     font-size: 20px;
@@ -15,24 +5,8 @@
     margin-right: 2px;
 }
 
-.text {
-    font-size: 20px;
-    color: white;
-}
-
 .text-align .webix_template {
     text-align: center;
-}
-
-.white_button .webix_button {
-    color: white;
-    font-size: 20px;
-}
-
-.white_button .webix_button .webix_icon_btn {
-    color: white;
-    vertical-align: text-bottom;
-    margin-bottom: 1px;
 }
 
 .template_style {
@@ -45,14 +19,17 @@
 .connect {
     margin-left: 5px;
 }
-.window_selection  {
+
+.window_selection {
     background-color: transparent;
     font-size: 16px;
     border-bottom: none;
 }
+
 .window_selection .webix_list_item {
     border-color: transparent;
 }
+
 .main_list_background {
-    background-color:lightgray;
+    background-color: lightgray;
 }

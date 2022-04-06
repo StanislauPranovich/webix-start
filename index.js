@@ -17,10 +17,11 @@ let header = {
 		},
 		{
 			view: "button",
-            type: "icon",
-            icon: "wxi-user",
-            label: "Profile",
+			type: "icon",
+			icon: "wxi-user",
+			label: "Profile",
 			autowidth: true,
+			popup: "menu",
 			css: "webix_transparent"
 		},
 	],
@@ -39,7 +40,7 @@ let mainList = {
 		{
 			view: "template",
 			template: "<span class = 'fas fa-check'></span> <span class='connect'>Connected</span>",
-            autoheight:true,
+			autoheight: true,
 			css: "template_style"
 		}
 	],
@@ -49,6 +50,7 @@ let mainList = {
 
 let mainDataTable = {
 	view: "datatable",
+	id: "main_data",
 	autoConfig: true,
 	data: small_film_set,
 	scroll: false,
@@ -58,14 +60,15 @@ let mainDataTable = {
 
 let mainForm = {
 	view: "form",
+	id: "main_form",
 	elements: [
 		{
 			rows: [
 				{ template: "Edit Films", type: "section" },
-				{ view: "text", label: "Title"},
-				{ view: "text", label: "Year"},
-				{ view: "text", label: "Rating"},
-				{ view: "text", label: "Votes"},
+				{ view: "text", label: "Title", name: "title", invalidMessage: "'Title' must be filled in" },
+				{ view: "text", label: "Year", name: "year", invalidMessage: "'Year' between 1970 and current" },
+				{ view: "text", label: "Rating", name: "rating", invalidMessage: "'Rating' can't be empty or 0" },
+				{ view: "text", label: "Votes", name: "votes", invalidMessage: "'Votes' must be less than 100000" },
 			],
 			margin: 10
 		},
@@ -75,17 +78,47 @@ let mainForm = {
 					view: "button",
 					value: "Add new",
 					css: "webix_primary",
+					click: function () {
+						if ($$("main_form").validate()) {
+							webix.message("Validation is successful!");
+							let item = $$("main_form").getValues();
+							$$("main_data").add(item);
+						}
+					},
 				},
 				{
 					view: "button",
-					value: "Clear"
+					value: "Clear",
+					click: function() {
+						webix.confirm({
+							title: "Clearing the form",
+							text: "Do you want to clear form data?",
+
+						}).then(
+							function(){
+								$$("main_form").clear();
+								$$("main_form").clearValidation();
+							}
+						)
+					}
 				}
 			],
-			margin: 10
 		},
 		{},
 	],
-	width: 270
+	rules: {
+		title: webix.rules.isNotEmpty,
+		year: function (value) {
+			return 1970 <= value && value <= 2022;
+		},
+		rating: function (value) {
+			return webix.rules.isNotEmpty && 0 < value && value <= 10;
+		},
+		votes: function (value) {
+			return 0 <= value && value <= 100000;
+		}
+	},
+	width: 320
 };
 
 let footer = {
@@ -108,4 +141,15 @@ webix.ui({
 		},
 		footer,
 	]
+})
+
+webix.ui({
+	view: "popup",
+	id: "menu",
+	width: 270,
+	body: {
+		view: "list",
+		data: ["Settings", "Log Out"],
+		autoheight: true
+	}
 })

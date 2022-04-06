@@ -20,24 +20,39 @@
     color: white;
 }
 
-.webix_template {
+.text-align .webix_template {
     text-align: center;
 }
 
-.webix_transparent .webix_button {
+.white_button .webix_button {
+    color: white;
+    font-size: 20px;
+}
+
+.white_button .webix_button .webix_icon_btn {
+    color: white;
+    vertical-align: text-bottom;
+    margin-bottom: 1px;
+}
+
+.template_style {
     color: green;
+    text-align: center;
+    background-color: lightgray;
+    border: none;
 }
 
 .connect {
     margin-left: 5px;
 }
-.webix_list_item  {
-    background-color:lightgray;
+.window_selection  {
+    background-color: transparent;
     font-size: 16px;
+    border-bottom: none;
 }
-.list_background {
+.window_selection .webix_list_item {
+    border-color: transparent;
+}
+.main_list_background {
     background-color:lightgray;
-}
-.webix_el_text {
-    padding: 5px 0;
 }

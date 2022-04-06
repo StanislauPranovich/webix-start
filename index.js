@@ -19,7 +19,7 @@ let header = {
             icon: "wxi-user",
             label: "Profile",
 			autowidth: true,
-			css: "webix_transparent"
+			css: "webix_transparent white_button"
 		}
 	],
 	css: "header"
@@ -30,18 +30,19 @@ let mainList = {
 		{
 			view: "list",
 			data: ["Dashboard", "Users", "Products", "Locations"],
-			autoheight: true
+			autoheight: true,
+			css: "window_selection"
 		},
 		{},
 		{
 			view: "template",
-			template: "<span class = 'fas fa-check'></span><span class = 'connect'>Connected</span>",
+			template: "<span class = 'fas fa-check'></span> <span class='connect'>Connected</span>",
             autoheight:true,
-            css: "template_style"
+			css: "template_style"
 		}
 	],
 	width: 200,
-	css: "list_background",
+	css: "main_list_background"
 };
 
 let mainDataTable = {
@@ -59,12 +60,14 @@ let mainForm = {
 		{
 			rows: [
 				{ template: "Edit Films", type: "section" },
-				{ view: "text", label: "Title", value: "" },
-				{ view: "text", label: "Year", value: "" },
-				{ view: "text", label: "Rating", value: "" },
-				{ view: "text", label: "Votes", value: "" },
+				{ view: "text", label: "Title"},
+				{ height: 10},
+				{ view: "text", label: "Year"},
+				{ height: 10},
+				{ view: "text", label: "Rating"},
+				{ height: 10},
+				{ view: "text", label: "Votes"},
 			],
-			height: 230,
 		},
 		{
 			cols: [
@@ -73,22 +76,24 @@ let mainForm = {
 					value: "Add new",
 					css: "webix_primary",
 				},
-				{ width: 10 },
 				{
 					view: "button",
 					value: "Clear"
 				}
 			],
-			width: 220
+			margin: 10
 		},
+		{},
 	],
-	height: 750
+	width: 270,
+	autoheight: true
 };
 
 let footer = {
 	view: "template",
 	template: "The software is provided by <a href='https://webix.com'>https://webix.com.</a> All rights reserved (c)",
-	css: "text-align webix_template"
+	css: "text-align webix_template",
+	height: 30,
 };
 
 webix.ui({
@@ -102,6 +107,6 @@ webix.ui({
 				mainForm
 			]
 		},
-		footer
+		footer,
 	]
 })

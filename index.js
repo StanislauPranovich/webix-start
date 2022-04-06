@@ -78,10 +78,11 @@ let mainForm = {
 					view: "button",
 					value: "Add new",
 					css: "webix_primary",
-					click: function () {
-						if ($$("main_form").validate()) {
+					click() {
+						let form = $$("main_form");
+						if (form.validate()) {
 							webix.message("Validation is successful!");
-							let item = $$("main_form").getValues();
+							let item = form.getValues();
 							$$("main_data").add(item);
 						}
 					},
@@ -89,15 +90,16 @@ let mainForm = {
 				{
 					view: "button",
 					value: "Clear",
-					click: function() {
+					click() {
 						webix.confirm({
 							title: "Clearing the form",
 							text: "Do you want to clear form data?",
 
 						}).then(
-							function(){
-								$$("main_form").clear();
-								$$("main_form").clearValidation();
+							() => {
+								let mainForm = $$("main_form");
+								mainForm.clear();
+								mainForm.clearValidation();
 							}
 						)
 					}
@@ -108,15 +110,9 @@ let mainForm = {
 	],
 	rules: {
 		title: webix.rules.isNotEmpty,
-		year: function (value) {
-			return 1970 <= value && value <= 2022;
-		},
-		rating: function (value) {
-			return webix.rules.isNotEmpty && 0 < value && value <= 10;
-		},
-		votes: function (value) {
-			return 0 <= value && value <= 100000;
-		}
+		year: value => 1970 <= value && value <= 2022,
+		rating: value => webix.rules.isNotEmpty && 0 < value && value <= 10,
+		votes: value => 0 <= value && value <= 100000,
 	},
 	width: 320
 };

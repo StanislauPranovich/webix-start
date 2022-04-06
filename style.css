@@ -1,0 +1,28 @@
+.text-align .webix_template {
+    text-align: center;
+}
+
+.template_style {
+    color: green;
+    text-align: center;
+    background-color: lightgray;
+    border: none;
+}
+
+.connect {
+    margin-left: 5px;
+}
+
+.window_selection {
+    background-color: transparent;
+    font-size: 16px;
+    border-bottom: none;
+}
+
+.window_selection .webix_list_item {
+    border-color: transparent;
+}
+
+.main_list_background {
+    background-color: lightgray;
+}

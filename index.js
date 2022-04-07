@@ -250,7 +250,6 @@ let usersChart = {
 
 let products = {
 	view: "treetable",
-	open: true,
 	id: "products_tree",
 	columns: [
 		{ id: "id", header: "", width: 50 },

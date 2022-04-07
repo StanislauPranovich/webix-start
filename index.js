@@ -93,10 +93,10 @@ let mainDataTable = {
 	select: true,
 	autowidth: true,
 	columns: [
-		{ id: "rank", header: "Rank", sort: sortByRank },
-		{ id: "title", header: "Film Title", width: 470, sort: sortByTitle },
-		{ id: "year", header: "Released", sort: sortByYear },
-		{ id: "votes", header: "Votes", sort: sortByVotes },
+		{ id: "rank", header: "", sort: sortByRank, css: "main_datatable_first_column" },
+		{ id: "title", header: ["Film Title", {content: "textFilter"}], width: 470, sort: sortByTitle },
+		{ id: "year", header: ["Released", {content: "textFilter"}], sort: sortByYear },
+		{ id: "votes", header: ["Votes", {content: "textFilter"}], sort: sortByVotes },
 		{ id: 'del', header: "", template: "{common.trashIcon()}" }
 	],
 	on: {
@@ -107,7 +107,8 @@ let mainDataTable = {
 			this.remove(id);
 			return false;
 		}
-	}
+	},
+	hover: "datatable_hover"
 };
 
 let mainForm = {
@@ -146,7 +147,6 @@ let mainForm = {
 						webix.confirm({
 							title: "Clearing the form",
 							text: "Do you want to clear form data?",
-
 						}).then(
 							() => {
 								let mainForm = $$("main_form");

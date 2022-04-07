@@ -3,7 +3,7 @@ function dataReading(id) {
 	$$("main_form").setValues(values);
 }
 
-function editData() {
+function editAndAddData() {
 	let form = $$("main_form");
 	let table = $$("main_data");
 	let formData = form.getValues();
@@ -12,12 +12,6 @@ function editData() {
 	} else {
 		table.add(formData);
 	}
-}
-
-function sortByTitle(a, b) {
-	a = a.title.toString().length;
-	b = b.title.toString().length;
-	return a > b ? 1 : (a < b ? -1 : 0);
 }
 
 function sortByVotes(a, b) {
@@ -32,10 +26,8 @@ function sortByRank(a, b) {
 	return a > b ? 1 : (a < b ? -1 : 0);
 }
 
-function sortByYear(a, b) {
-	a = +a.year;
-	b = +b.year;
-	return a > b ? 1 : (a < b ? -1 : 0);
+const usersListSorting = (type) => {
+	return $$("users_list").sort("name", `${type}`, "string");
 }
 
 let header = {
@@ -68,7 +60,7 @@ let mainList = {
 			css: "window_selection",
 			select: true,
 			on: {
-				onAfterSelect: function (id) {
+				onAfterSelect(id) {
 					$$(id).show();
 				}
 			},
@@ -94,8 +86,8 @@ let mainDataTable = {
 	autowidth: true,
 	columns: [
 		{ id: "rank", header: "", sort: sortByRank, css: "main_datatable_first_column" },
-		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: sortByTitle },
-		{ id: "year", header: ["Released", { content: "textFilter" }], sort: sortByYear },
+		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: "string" },
+		{ id: "year", header: ["Released", { content: "textFilter" }], sort: "int" },
 		{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: sortByVotes },
 		{ id: 'del', header: "", template: "{common.trashIcon()}" }
 	],
@@ -103,7 +95,7 @@ let mainDataTable = {
 		onAfterSelect: dataReading,
 	},
 	onClick: {
-		"wxi-trash": function (e, id) {
+		"wxi-trash"(e, id) {
 			this.remove(id);
 			return false;
 		}
@@ -162,8 +154,8 @@ let mainForm = {
 			cols: [
 				{
 					view: "button",
-					value: 'Edit',
-					click: editData
+					value: 'Save',
+					click: editAndAddData
 				},
 				{}
 			]
@@ -186,10 +178,9 @@ let usersList = {
 				view: "text",
 				id: "users_list_input",
 				on: {
-					"onTimedKeyPress": function () {
-						let value = this.getValue().toLowerCase();
-						$$("users_list").filter(function (obj) {
-							return obj.name.toLowerCase().indexOf(value) !== -1;
+					"onTimedKeyPress"() {
+						$$("users_list").filter(obj => {
+							return obj.name.toLowerCase().indexOf($$("users_list_input").getValue()) !== -1;
 						})
 					}
 				}
@@ -200,7 +191,7 @@ let usersList = {
 				css: "webix_primary",
 				autowidth: true,
 				click() {
-					$$("users_list").sort("name", "asc", "string");
+					usersListSorting("asc");
 				}
 			},
 			{
@@ -209,7 +200,7 @@ let usersList = {
 				css: "webix_primary",
 				autowidth: true,
 				click() {
-					$$("users_list").sort("name", "desc", "string");
+					usersListSorting("desc");
 				}
 			}
 		],
@@ -220,18 +211,15 @@ let usersList = {
 		url: "data/users.js",
 		template: "#name# from #country# <span class='remove-btn'>X</span>",
 		onClick: {
-			"remove-btn": function (e, id) {
+			"remove-btn"(e, id) {
 				this.remove(id);
 				return false;
 			}
 		},
 		ready: function () {
-			$$("users_list").data.each(
-				function (obj) {
-					if (obj.id <= 5) {
-						obj.$css = 'users_list_highlight'
-					}
-				}
+			$$("users_list").data.each(obj => {
+				obj.id <= 5 ? obj.$css = 'users_list_highlight' : null;
+			}
 			)
 		},
 	},
@@ -263,7 +251,7 @@ let products = {
 	select: "row",
 	url: "data/products.js",
 	scroll: false,
-	ready: function() {
+	ready() {
 		$$("products_tree").openAll();
 	}
 };

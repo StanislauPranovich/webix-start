@@ -124,6 +124,18 @@ let footer = {
 	height: 30,
 };
 
+
+webix.ui({
+	view: "popup",
+	id: "menu",
+	width: 270,
+	body: {
+		view: "list",
+		data: ["Settings", "Log Out"],
+		autoheight: true
+	}
+})
+
 webix.ui({
 	rows: [
 		header,
@@ -137,15 +149,4 @@ webix.ui({
 		},
 		footer,
 	]
-})
-
-webix.ui({
-	view: "popup",
-	id: "menu",
-	width: 270,
-	body: {
-		view: "list",
-		data: ["Settings", "Log Out"],
-		autoheight: true
-	}
 })

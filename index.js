@@ -1,11 +1,42 @@
-let small_film_set = [
-	{ id: 1, title: "The Shawshank Redemption", year: 1994, votes: 678790, rating: 9.2, rank: 1, category: "Thriller" },
-	{ id: 2, title: "The Godfather", year: 1972, votes: 511495, rating: 9.2, rank: 2, category: "Crime" },
-	{ id: 3, title: "The Godfather: Part II", year: 1974, votes: 319352, rating: 9.0, rank: 3, category: "Crime" },
-	{ id: 4, title: "The Good, the Bad and the Ugly", year: 1966, votes: 213030, rating: 8.9, rank: 4, category: "Western" },
-	{ id: 5, title: "Pulp fiction", year: 1994, votes: 533848, rating: 8.9, rank: 5, category: "Crime" },
-	{ id: 6, title: "12 Angry Men", year: 1957, votes: 164558, rating: 8.9, rank: 6, category: "Western" }
-];
+function dataReading(id) {
+	let values = $$("main_data").getItem(id);
+	$$("main_form").setValues(values);
+}
+
+function editData() {
+	let form = $$("main_form");
+	let table = $$("main_data");
+	let formData = form.getValues();
+	if (formData.id) {
+		table.updateItem(formData.id, formData)
+	} else {
+		table.add(formData);
+	}
+}
+
+function sortByTitle(a, b) {
+	a = a.title.toString().length;
+	b = b.title.toString().length;
+	return a > b ? 1 : (a < b ? -1 : 0);
+}
+
+function sortByVotes(a, b) {
+	a = +a.votes.replace(',', '.');
+	b = +b.votes.replace(',', '.');
+	return a > b ? 1 : (a < b ? -1 : 0);
+}
+
+function sortByRank(a, b) {
+	a = +a.rank;
+	b = +b.rank;
+	return a > b ? 1 : (a < b ? -1 : 0);
+}
+
+function sortByYear(a, b) {
+	a = +a.year;
+	b = +b.year;
+	return a > b ? 1 : (a < b ? -1 : 0);
+}
 
 let header = {
 	view: "toolbar",
@@ -32,9 +63,15 @@ let mainList = {
 	rows: [
 		{
 			view: "list",
-			data: ["Dashboard", "Users", "Products", "Locations"],
+			data: ["Dashboard", "Users", "Products", "Admin"],
 			autoheight: true,
-			css: "window_selection"
+			css: "window_selection",
+			select: true,
+			on: {
+				onAfterSelect: function (id) {
+					$$(id).show();
+				}
+			},
 		},
 		{},
 		{
@@ -44,18 +81,33 @@ let mainList = {
 			css: "template_style"
 		}
 	],
-	width: 200,
+	maxWidth: 200,
 	css: "main_list_background"
 };
 
 let mainDataTable = {
 	view: "datatable",
 	id: "main_data",
-	autoConfig: true,
-	data: small_film_set,
-	scroll: false,
-	minWidth: 730,
-	maxWidth: 1060
+	url: "data.js",
+	scroll: 'y',
+	select: true,
+	autowidth: true,
+	columns: [
+		{ id: "rank", header: "Rank", sort: sortByRank },
+		{ id: "title", header: "Film Title", width: 470, sort: sortByTitle },
+		{ id: "year", header: "Released", sort: sortByYear },
+		{ id: "votes", header: "Votes", sort: sortByVotes },
+		{ id: 'del', header: "", template: "{common.trashIcon()}" }
+	],
+	on: {
+		onAfterSelect: dataReading
+	},
+	onClick: {
+		"wxi-trash": function (e, id) {
+			this.remove(id);
+			return false;
+		}
+	}
 };
 
 let mainForm = {
@@ -106,6 +158,16 @@ let mainForm = {
 				}
 			],
 		},
+		{
+			cols: [
+				{
+					view: "button",
+					value: 'Edit',
+					click: editData
+				},
+				{}
+			]
+		},
 		{},
 	],
 	rules: {
@@ -113,9 +175,17 @@ let mainForm = {
 		year: value => 1970 <= value && value <= 2022,
 		rating: value => webix.rules.isNotEmpty && 0 < value && value <= 10,
 		votes: value => 0 <= value && value <= 100000,
-	},
-	width: 320
+	}
 };
+
+let main = {
+	cells: [
+		{ id: "Dashboard", cols: [mainDataTable, mainForm] },
+		{ id: "Users", template: "Users" },
+		{ id: "Products", template: "Products" },
+		{ id: "Admin" }
+	]
+}
 
 let footer = {
 	view: "template",
@@ -123,7 +193,6 @@ let footer = {
 	css: "text-align webix_template",
 	height: 30,
 };
-
 
 webix.ui({
 	view: "popup",
@@ -143,8 +212,7 @@ webix.ui({
 			cols: [
 				mainList,
 				{ view: "resizer" },
-				mainDataTable,
-				mainForm
+				main
 			]
 		},
 		footer,

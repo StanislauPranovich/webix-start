@@ -210,7 +210,6 @@ let usersList = {
 				autowidth: true,
 				click() {
 					$$("users_list").sort("name", "desc", "string");
-					console.log($$("users.list"));
 				}
 			}
 		],

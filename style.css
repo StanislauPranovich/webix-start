@@ -34,3 +34,9 @@
     background-color: #F4F5F9;
     cursor: pointer;
 }
+.remove-btn {
+    float: right;
+}
+.users_list_highlight {
+    background-color: antiquewhite;
+}

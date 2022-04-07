@@ -88,19 +88,19 @@ let mainList = {
 let mainDataTable = {
 	view: "datatable",
 	id: "main_data",
-	url: "data.js",
+	url: "data/data.js",
 	scroll: 'y',
 	select: true,
 	autowidth: true,
 	columns: [
 		{ id: "rank", header: "", sort: sortByRank, css: "main_datatable_first_column" },
-		{ id: "title", header: ["Film Title", {content: "textFilter"}], width: 470, sort: sortByTitle },
-		{ id: "year", header: ["Released", {content: "textFilter"}], sort: sortByYear },
-		{ id: "votes", header: ["Votes", {content: "textFilter"}], sort: sortByVotes },
+		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: sortByTitle },
+		{ id: "year", header: ["Released", { content: "textFilter" }], sort: sortByYear },
+		{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: sortByVotes },
 		{ id: 'del', header: "", template: "{common.trashIcon()}" }
 	],
 	on: {
-		onAfterSelect: dataReading
+		onAfterSelect: dataReading,
 	},
 	onClick: {
 		"wxi-trash": function (e, id) {
@@ -178,11 +178,103 @@ let mainForm = {
 	}
 };
 
+
+let usersList = {
+	rows: [{
+		cols: [
+			{
+				view: "text",
+				id: "users_list_input",
+				on: {
+					"onTimedKeyPress": function () {
+						let value = this.getValue().toLowerCase();
+						$$("users_list").filter(function (obj) {
+							return obj.name.toLowerCase().indexOf(value) !== -1;
+						})
+					}
+				}
+			},
+			{
+				view: "button",
+				value: "Sort asc",
+				css: "webix_primary",
+				autowidth: true,
+				click() {
+					$$("users_list").sort("name", "asc", "string");
+				}
+			},
+			{
+				view: "button",
+				value: "Sort desc",
+				css: "webix_primary",
+				autowidth: true,
+				click() {
+					$$("users_list").sort("name", "desc", "string");
+					console.log($$("users.list"));
+				}
+			}
+		],
+	},
+	{
+		view: "list",
+		id: 'users_list',
+		url: "data/users.js",
+		template: "#name# from #country# <span class='remove-btn'>X</span>",
+		onClick: {
+			"remove-btn": function (e, id) {
+				this.remove(id);
+				return false;
+			}
+		},
+		ready: function () {
+			$$("users_list").data.each(
+				function (obj) {
+					if (obj.id <= 5) {
+						obj.$css = 'users_list_highlight'
+					}
+				}
+			)
+		},
+	},
+	]
+}
+
+let usersChart = {
+	view: "chart",
+	id: "users_chart",
+	url: "data/users.js",
+	type: "bar",
+	value: "#age#",
+	xAxis: "#age#"
+}
+
+let products = {
+	view: "treetable",
+	open: true,
+	id: "products_tree",
+	columns: [
+		{ id: "id", header: "", width: 50 },
+		{
+			id: "title",
+			header: "Title",
+			width: 250,
+			template: "{common.treetable()} #title#"
+		},
+		{ id: "price", header: "Price", width: 200 }
+	],
+	select: "row",
+	url: "data/products.js",
+	scroll: false,
+	ready: function() {
+		$$("products_tree").openAll();
+	}
+};
+
 let main = {
 	cells: [
 		{ id: "Dashboard", cols: [mainDataTable, mainForm] },
-		{ id: "Users", template: "Users" },
-		{ id: "Products", template: "Products" },
+		{ id: "Users", rows: [usersList, usersChart] },
+		{ id: "Products", rows: [products] },
 		{ id: "Admin" }
 	]
 }

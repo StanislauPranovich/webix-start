@@ -68,7 +68,7 @@ let mainList = {
 			css: "template_style"
 		}
 	],
-	maxWidth: 200,
+	maxWidth: 120,
 	css: "main_list_background"
 };
 
@@ -82,8 +82,9 @@ let mainDataTable = {
 	columns: [
 		{ id: "rank", header: "", sort: sortByRank, css: "main_datatable_first_column" },
 		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: "string" },
-		{ id: "year", header: ["Released", { content: "textFilter" }], sort: "int" },
+		{ id: "rating", header: ["Rating",{content: "textFilter"}], sort: "int"},
 		{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: sortByVotes },
+		{ id: "year", header: ["Released", { content: "textFilter" }], sort: "int" },
 		{ id: 'del', header: "", template: "{common.trashIcon()}" }
 	],
 	onClick: {
@@ -282,3 +283,4 @@ webix.ui({
 })
 
 $$("main_form").bind($$("main_data"));
+$$("main_data").add({});

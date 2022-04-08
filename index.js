@@ -25,6 +25,10 @@ const usersListSorting = (type) => {
 	return $$("users_list").sort("name", `${type}`, "string");
 }
 
+const jenre = new webix.DataCollection({
+	url: "extra-js/categories.js",
+})
+
 let header = {
 	view: "toolbar",
 	css: "webix_dark",
@@ -82,7 +86,8 @@ let mainDataTable = {
 	columns: [
 		{ id: "rank", header: "", sort: sortByRank, css: "main_datatable_first_column" },
 		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: "string" },
-		{ id: "rating", header: ["Rating",{content: "textFilter"}], sort: "int"},
+		{ id: "categoryId", header: ["Category", { content: "textFilter" }], sort: "string", collection: jenre },
+		{ id: "rating", header: ["Rating", { content: "textFilter" }], sort: "int" },
 		{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: sortByVotes },
 		{ id: "year", header: ["Released", { content: "textFilter" }], sort: "int" },
 		{ id: 'del', header: "", template: "{common.trashIcon()}" }
@@ -93,7 +98,12 @@ let mainDataTable = {
 			return false;
 		}
 	},
-	hover: "datatable_hover"
+	hover: "datatable_hover",
+	scheme: {
+		$init(obj) {
+			obj.categoryId = Math.ceil(Math.random() * 4);
+		}
+	}
 };
 
 let mainForm = {
@@ -119,7 +129,7 @@ let mainForm = {
 					click() {
 						let form = $$("main_form");
 						if (form.isDirty()) {
-							if(!form.validate()) {
+							if (!form.validate()) {
 								return false;
 							}
 							webix.message("Validation is successful!");
@@ -202,8 +212,9 @@ let usersList = {
 			}
 		},
 		ready: function () {
-			$$("users_list").data.each(obj => {
-				obj.id <= 5 ? obj.$css = 'users_list_highlight' : null;
+			const users_list = $$("users_list");
+			users_list.data.each(obj => {
+				users_list.getIndexById(obj.id) <= 5 ? obj.$css = 'users_list_highlight' : null;
 			}
 			)
 		},
@@ -283,4 +294,3 @@ webix.ui({
 })
 
 $$("main_form").bind($$("main_data"));
-$$("main_data").add({});

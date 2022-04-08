@@ -1,8 +1,3 @@
-function dataReading(id) {
-	let values = $$("main_data").getItem(id);
-	$$("main_form").setValues(values);
-}
-
 function editAndAddData() {
 	let form = $$("main_form");
 	let table = $$("main_data");
@@ -91,9 +86,6 @@ let mainDataTable = {
 		{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: sortByVotes },
 		{ id: 'del', header: "", template: "{common.trashIcon()}" }
 	],
-	on: {
-		onAfterSelect: dataReading,
-	},
 	onClick: {
 		"wxi-trash"(e, id) {
 			this.remove(id);
@@ -121,14 +113,16 @@ let mainForm = {
 			cols: [
 				{
 					view: "button",
-					value: "Add new",
+					value: "Save",
 					css: "webix_primary",
 					click() {
 						let form = $$("main_form");
-						if (form.validate()) {
+						if (form.isDirty()) {
+							if(!form.validate()) {
+								return false;
+							}
 							webix.message("Validation is successful!");
-							let item = form.getValues();
-							$$("main_data").add(item);
+							form.save();
 						}
 					},
 				},
@@ -149,16 +143,6 @@ let mainForm = {
 					}
 				}
 			],
-		},
-		{
-			cols: [
-				{
-					view: "button",
-					value: 'Save',
-					click: editAndAddData
-				},
-				{}
-			]
 		},
 		{},
 	],
@@ -296,3 +280,5 @@ webix.ui({
 		footer,
 	]
 })
+
+$$("main_form").bind($$("main_data"));

@@ -9,15 +9,13 @@ function editAndAddData() {
 	}
 }
 
-function sortByVotes(a, b) {
-	a = +a.votes.replace(',', '.');
-	b = +b.votes.replace(',', '.');
-	return a > b ? 1 : (a < b ? -1 : 0);
+function symbolChanges(i) {
+	return +i.votes.replace(',', '.');
 }
 
-function sortByRank(a, b) {
-	a = +a.rank;
-	b = +b.rank;
+function sortByVotes(a, b) {
+	a = symbolChanges(a);
+	b = symbolChanges(b);
 	return a > b ? 1 : (a < b ? -1 : 0);
 }
 
@@ -84,7 +82,7 @@ let mainDataTable = {
 	select: true,
 	autowidth: true,
 	columns: [
-		{ id: "rank", header: "", sort: sortByRank, css: "main_datatable_first_column" },
+		{ id: "rank", header: "", sort: "int", css: "main_datatable_first_column" },
 		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: "string" },
 		{ id: "categoryId", header: ["Category", { content: "textFilter" }], sort: "string", collection: jenre },
 		{ id: "rating", header: ["Rating", { content: "textFilter" }], sort: "int" },
@@ -134,6 +132,8 @@ let mainForm = {
 							}
 							webix.message("Validation is successful!");
 							form.save();
+							form.clear();
+							form.clearValidation();
 						}
 					},
 				},

@@ -26,3 +26,17 @@
 .main_list_background {
     background-color: lightgray;
 }
+
+.main_datatable_first_column {
+    background-color: #F4F5F9;
+}
+.datatable_hover {
+    background-color: #F4F5F9;
+    cursor: pointer;
+}
+.remove-btn {
+    float: right;
+}
+.users_list_highlight {
+    background-color: antiquewhite;
+}

@@ -1,11 +1,32 @@
-let small_film_set = [
-	{ id: 1, title: "The Shawshank Redemption", year: 1994, votes: 678790, rating: 9.2, rank: 1, category: "Thriller" },
-	{ id: 2, title: "The Godfather", year: 1972, votes: 511495, rating: 9.2, rank: 2, category: "Crime" },
-	{ id: 3, title: "The Godfather: Part II", year: 1974, votes: 319352, rating: 9.0, rank: 3, category: "Crime" },
-	{ id: 4, title: "The Good, the Bad and the Ugly", year: 1966, votes: 213030, rating: 8.9, rank: 4, category: "Western" },
-	{ id: 5, title: "Pulp fiction", year: 1994, votes: 533848, rating: 8.9, rank: 5, category: "Crime" },
-	{ id: 6, title: "12 Angry Men", year: 1957, votes: 164558, rating: 8.9, rank: 6, category: "Western" }
-];
+function dataReading(id) {
+	let values = $$("main_data").getItem(id);
+	$$("main_form").setValues(values);
+}
+
+function editAndAddData() {
+	let form = $$("main_form");
+	let table = $$("main_data");
+	let formData = form.getValues();
+	if (formData.id) {
+		table.updateItem(formData.id, formData)
+	} else {
+		table.add(formData);
+	}
+}
+
+function symbolChanges(i) {
+	return +i.votes.replace(',', '.');
+}
+
+function sortByVotes(a, b) {
+	a = symbolChanges(a);
+	b = symbolChanges(b);
+	return a > b ? 1 : (a < b ? -1 : 0);
+}
+
+const usersListSorting = (type) => {
+	return $$("users_list").sort("name", type, "string");
+}
 
 let header = {
 	view: "toolbar",
@@ -32,9 +53,15 @@ let mainList = {
 	rows: [
 		{
 			view: "list",
-			data: ["Dashboard", "Users", "Products", "Locations"],
+			data: ["Dashboard", "Users", "Products", "Admin"],
 			autoheight: true,
-			css: "window_selection"
+			css: "window_selection",
+			select: true,
+			on: {
+				onAfterSelect(id) {
+					$$(id).show();
+				}
+			},
 		},
 		{},
 		{
@@ -44,18 +71,34 @@ let mainList = {
 			css: "template_style"
 		}
 	],
-	width: 200,
+	maxWidth: 200,
 	css: "main_list_background"
 };
 
 let mainDataTable = {
 	view: "datatable",
 	id: "main_data",
-	autoConfig: true,
-	data: small_film_set,
-	scroll: false,
-	minWidth: 730,
-	maxWidth: 1060
+	url: "data/data.js",
+	scroll: 'y',
+	select: true,
+	autowidth: true,
+	columns: [
+		{ id: "rank", header: "", sort: "int", css: "main_datatable_first_column" },
+		{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: "string" },
+		{ id: "year", header: ["Released", { content: "textFilter" }], sort: "int" },
+		{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: sortByVotes },
+		{ id: 'del', header: "", template: "{common.trashIcon()}" }
+	],
+	on: {
+		onAfterSelect: dataReading,
+	},
+	onClick: {
+		"wxi-trash"(e, id) {
+			this.remove(id);
+			return false;
+		}
+	},
+	hover: "datatable_hover"
 };
 
 let mainForm = {
@@ -76,14 +119,18 @@ let mainForm = {
 			cols: [
 				{
 					view: "button",
-					value: "Add new",
+					value: "Save",
 					css: "webix_primary",
 					click() {
 						let form = $$("main_form");
-						if (form.validate()) {
+						if (form.isDirty()) {
+							if (!form.validate()) {
+								return false;
+							}
 							webix.message("Validation is successful!");
-							let item = form.getValues();
-							$$("main_data").add(item);
+							form.save();
+							form.clearValidation();
+							form.clear();
 						}
 					},
 				},
@@ -94,7 +141,6 @@ let mainForm = {
 						webix.confirm({
 							title: "Clearing the form",
 							text: "Do you want to clear form data?",
-
 						}).then(
 							() => {
 								let mainForm = $$("main_form");
@@ -113,17 +159,112 @@ let mainForm = {
 		year: value => 1970 <= value && value <= 2022,
 		rating: value => webix.rules.isNotEmpty && 0 < value && value <= 10,
 		votes: value => 0 <= value && value <= 100000,
-	},
-	width: 320
+	}
 };
+
+
+let usersList = {
+	rows: [{
+		cols: [
+			{
+				view: "text",
+				id: "users_list_input",
+				on: {
+					"onTimedKeyPress"() {
+						const value = $$("users_list_input").getValue();
+						$$("users_list").filter(obj => {
+							const name = obj.name.toLowerCase();
+							return name.indexOf(value) !== -1
+						})
+					}
+				}
+			},
+			{
+				view: "button",
+				value: "Sort asc",
+				css: "webix_primary",
+				autowidth: true,
+				click() {
+					usersListSorting("asc");
+				}
+			},
+			{
+				view: "button",
+				value: "Sort desc",
+				css: "webix_primary",
+				autowidth: true,
+				click() {
+					usersListSorting("desc");
+				}
+			}
+		],
+	},
+	{
+		view: "list",
+		id: 'users_list',
+		url: "data/users.js",
+		template: "#name# from #country# <span class='remove-btn'>X</span>",
+		onClick: {
+			"remove-btn"(e, id) {
+				this.remove(id);
+				return false;
+			}
+		},
+		ready: function () {
+			const users_list = $$("users_list");
+			users_list.data.each(obj => {
+				users_list.getIndexById(obj.id) <= 5 ? obj.$css = 'users_list_highlight' : null;
+			}
+			)
+		},
+	},
+	]
+}
+
+let usersChart = {
+	view: "chart",
+	id: "users_chart",
+	url: "data/users.js",
+	type: "bar",
+	value: "#age#",
+	xAxis: "#age#"
+}
+
+let products = {
+	view: "treetable",
+	id: "products_tree",
+	columns: [
+		{ id: "id", header: "", width: 50 },
+		{
+			id: "title",
+			header: "Title",
+			width: 250,
+			template: "{common.treetable()} #title#"
+		},
+		{ id: "price", header: "Price", fillspace: true }
+	],
+	select: "cell",
+	url: "data/products.js",
+	ready() {
+		$$("products_tree").openAll();
+	}
+};
+
+let main = {
+	cells: [
+		{ id: "Dashboard", cols: [mainDataTable, mainForm] },
+		{ id: "Users", rows: [usersList, usersChart] },
+		{ id: "Products", rows: [products] },
+		{ id: "Admin" }
+	]
+}
 
 let footer = {
 	view: "template",
 	template: "The software is provided by <a href='https://webix.com'>https://webix.com.</a> All rights reserved (c)",
-	css: "text-align webix_template",
+	css: "text-align",
 	height: 30,
 };
-
 
 webix.ui({
 	view: "popup",
@@ -143,10 +284,11 @@ webix.ui({
 			cols: [
 				mainList,
 				{ view: "resizer" },
-				mainDataTable,
-				mainForm
+				main
 			]
 		},
 		footer,
 	]
 })
+
+$$("main_form").bind($$("main_data"));

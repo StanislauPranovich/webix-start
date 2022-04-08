@@ -119,14 +119,18 @@ let mainForm = {
 			cols: [
 				{
 					view: "button",
-					value: "Add new",
+					value: "Save",
 					css: "webix_primary",
 					click() {
 						let form = $$("main_form");
-						if (form.validate()) {
+						if (form.isDirty()) {
+							if (!form.validate()) {
+								return false;
+							}
 							webix.message("Validation is successful!");
-							let item = form.getValues();
-							$$("main_data").add(item);
+							form.save();
+							form.clearValidation();
+							form.clear();
 						}
 					},
 				},
@@ -148,16 +152,6 @@ let mainForm = {
 				}
 			],
 		},
-		{
-			cols: [
-				{
-					view: "button",
-					value: 'Save',
-					click: editAndAddData
-				},
-				{}
-			]
-		},
 		{},
 	],
 	rules: {
@@ -177,7 +171,11 @@ let usersList = {
 				id: "users_list_input",
 				on: {
 					"onTimedKeyPress"() {
-						$$("users_list").filter(obj => obj.name.toLowerCase().indexOf($$("users_list_input").getValue()) !== -1);
+						const value = $$("users_list_input").getValue();
+						$$("users_list").filter(obj => {
+							const name = obj.name.toLowerCase();
+							return name.indexOf(value) !== -1
+						})
 					}
 				}
 			},
@@ -213,8 +211,9 @@ let usersList = {
 			}
 		},
 		ready: function () {
-			$$("users_list").data.each(obj => {
-				obj.id <= 5 ? obj.$css = 'users_list_highlight' : null;
+			const users_list = $$("users_list");
+			users_list.data.each(obj => {
+				users_list.getIndexById(obj.id) <= 5 ? obj.$css = 'users_list_highlight' : null;
 			}
 			)
 		},
@@ -242,11 +241,10 @@ let products = {
 			width: 250,
 			template: "{common.treetable()} #title#"
 		},
-		{ id: "price", header: "Price", width: 200 }
+		{ id: "price", header: "Price", fillspace: true }
 	],
-	select: "row",
+	select: "cell",
 	url: "data/products.js",
-	scroll: false,
 	ready() {
 		$$("products_tree").openAll();
 	}
@@ -292,3 +290,5 @@ webix.ui({
 		footer,
 	]
 })
+
+$$("main_form").bind($$("main_data"));

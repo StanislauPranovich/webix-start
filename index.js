@@ -280,7 +280,7 @@ let products = {
 			width: 250,
 			template: "{common.treetable()} #title#"
 		},
-		{ id: "price", header: "Price", width: 200, editor: "text" }
+		{ id: "price", header: "Price", width: 200, editor: "text", fillspace: true }
 	],
 	select: "cell",
 	url: "data/products.js",

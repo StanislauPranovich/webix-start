@@ -2,10 +2,6 @@ webix.protoUI({
 	name: "editlist"
 }, webix.EditAbility, webix.ui.list);
 
-function symbolChanges(i) {
-	return +i.votes.replace(',', '.');
-}
-
 const usersListSorting = (type) => {
 	return $$("users_list").sort("name", `${type}`, "string");
 }

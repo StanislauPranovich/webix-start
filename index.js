@@ -2,10 +2,18 @@ webix.protoUI({
 	name: "editlist"
 }, webix.EditAbility, webix.ui.list);
 
-const usersListSorting = (type) => {
-	return $$("users_list").sort("name", `${type}`, "string");
+function replaceCommaToDot(str) {
+	return str.replace(',', '.');
 }
 
+function randomInteger(min, max) {
+	let rand = min + Math.random() * (max + 1 - min);
+	return Math.floor(rand);
+}
+
+const usersListSorting = (type) => {
+	$$("users_list").sort("name", type, "string");
+}
 
 const jenre = new webix.DataCollection({
 	url: "extra-js/categories.js",
@@ -110,9 +118,9 @@ let mainDataTable = {
 			hover: "datatable_hover",
 			scheme: {
 				$init(obj) {
-					obj.categoryId = Math.ceil(Math.random() * 4);
-					obj.rating = obj.rating.replace(',', '.');
-					obj.votes = obj.votes.replace(',', '.') * 1000;
+					obj.categoryId = randomInteger(1, 4);
+					obj.rating = replaceCommaToDot(obj.rating);
+					obj.votes = replaceCommaToDot(obj.votes) * 1000;
 				}
 			}
 		}
@@ -222,9 +230,9 @@ let usersList = {
 				autowidth: true,
 				click() {
 					let obj = {};
-					obj.name = newUsersToList.data.pull[Math.ceil(Math.random() * newUsersToList.data.order.length)].name;
-					obj.age = Math.floor(Math.random() * 100);
-					obj.country = countries.data.pull[Math.ceil(Math.random() * countries.data.order.length)].value;
+					obj.name = newUsersToList.data.pull[randomInteger(1, newUsersToList.data.order.length)].name;
+					obj.age = randomInteger(1, 100);
+					obj.country = countries.data.pull[randomInteger(1, countries.data.order.length)].value;
 					$$("users_list").add(obj);
 				}
 			}
@@ -246,7 +254,9 @@ let usersList = {
 		},
 		scheme: {
 			$init(obj) {
-				obj.age < 26 ? obj.$css = "users_list_highlight" : null;
+				if (obj.age < 26) {
+					obj.$css = "users_list_highlight";
+				}
 			}
 		},
 		rules: {

@@ -103,7 +103,7 @@ let mainDataTable = {
 			columns: [
 				{ id: "rank", header: "", sort: "int", css: "main_datatable_first_column" },
 				{ id: "title", header: ["Film Title", { content: "textFilter" }], width: 470, sort: "string" },
-				{ id: "categoryId", header: ["Category", { content: "textFilter" }], sort: "string", collection: jenre },
+				{ id: "categoryId", header: ["Category", { content: "selectFilter" }], sort: "string", collection: jenre },
 				{ id: "rating", header: ["Rating", { content: "textFilter" }], sort: "int" },
 				{ id: "votes", header: ["Votes", { content: "textFilter" }], sort: "int" },
 				{ id: "year", header: "Released", sort: "int" },
@@ -157,6 +157,7 @@ let mainForm = {
 							form.save();
 							form.clear();
 							form.clearValidation();
+							$$("main_data").clearSelection();
 						}
 					},
 				},
@@ -172,6 +173,7 @@ let mainForm = {
 								let mainForm = $$("main_form");
 								mainForm.clear();
 								mainForm.clearValidation();
+								$$("main_data").clearSelection();
 							}
 						)
 					}
@@ -350,13 +352,15 @@ webix.ui({
 
 $$("main_form").bind($$("main_data"));
 
-$$("users_chart").sync($$("users_list"), function () {
-	$$("users_chart").group({
+const users_chart = $$("users_chart");
+users_chart.sync($$("users_list"), function () {
+	users_chart.group({
 		by: "country",
 		map: {
 			country: ["country", "count"]
 		}
 	},
+	users_chart.sort("country", "asc")
 	)
 });
 

@@ -6,6 +6,7 @@ const usersListSorting = (type) => {
 	return $$("users_list").sort("name", `${type}`, "string");
 }
 
+
 const jenre = new webix.DataCollection({
 	url: "extra-js/categories.js",
 })
@@ -66,6 +67,7 @@ let mainList = {
 };
 
 let mainDataTable = {
+
 	rows: [
 		{
 			view: "tabbar",
@@ -187,8 +189,10 @@ let usersList = {
 				id: "users_list_input",
 				on: {
 					"onTimedKeyPress"() {
+						const value = $$("users_list_input").getValue();
 						$$("users_list").filter(obj => {
-							return obj.name.toLowerCase().indexOf($$("users_list_input").getValue()) !== -1;
+							const name = obj.name.toLowerCase();
+							return name.indexOf(value) !== -1
 						})
 					}
 				}
@@ -284,7 +288,6 @@ let products = {
 	],
 	select: "cell",
 	url: "data/products.js",
-	scroll: false,
 	ready() {
 		$$("products_tree").openAll();
 	},
@@ -306,7 +309,7 @@ let main = {
 let footer = {
 	view: "template",
 	template: "The software is provided by <a href='https://webix.com'>https://webix.com.</a> All rights reserved (c)",
-	css: "text-align webix_template",
+	css: "text-align",
 	height: 30,
 };
 

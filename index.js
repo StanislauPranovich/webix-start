@@ -23,7 +23,7 @@ const countries = new webix.DataCollection({
 	url: "extra-js/countries.js",
 })
 
-const newUsersToList = new webix.DataCollection({
+const usersToList = new webix.DataCollection({
 	url: "data/users.js"
 })
 
@@ -75,7 +75,6 @@ let mainList = {
 };
 
 let mainDataTable = {
-
 	rows: [
 		{
 			view: "tabbar",
@@ -118,7 +117,7 @@ let mainDataTable = {
 			hover: "datatable_hover",
 			scheme: {
 				$init(obj) {
-					obj.categoryId = randomInteger(1, 4);
+					obj.categoryId = randomInteger(1, jenre.data.order.length);
 					obj.rating = replaceCommaToDot(obj.rating);
 					obj.votes = replaceCommaToDot(obj.votes) * 1000;
 				}
@@ -138,6 +137,7 @@ let mainForm = {
 				{ view: "text", label: "Year", name: "year", invalidMessage: "'Year' between 1970 and current" },
 				{ view: "text", label: "Rating", name: "rating", invalidMessage: "'Rating' can't be empty or 0" },
 				{ view: "text", label: "Votes", name: "votes", invalidMessage: "'Votes' must be less than 100000" },
+				{ view: "richselect", label: "categoryId", name: "categoryId", options: jenre }
 			],
 			margin: 10
 		},
@@ -192,79 +192,72 @@ let mainForm = {
 
 
 let usersList = {
-	rows: [{
-		cols: [
-			{
-				view: "text",
-				id: "users_list_input",
-				on: {
-					"onTimedKeyPress"() {
-						const value = $$("users_list_input").getValue();
-						$$("users_list").filter(obj => {
-							const name = obj.name.toLowerCase();
-							return name.indexOf(value) !== -1
-						})
+	rows: [
+		{
+			cols: [
+				{
+					view: "text",
+					id: "users_list_input",
+					on: {
+						"onTimedKeyPress"() {
+							const value = $$("users_list_input").getValue();
+							$$("users_list").filter(obj => {
+								const name = obj.name.toLowerCase();
+								return name.indexOf(value) !== -1
+							})
+						}
+					}
+				},
+				{
+					view: "button",
+					value: "Sort asc",
+					css: "webix_primary",
+					autowidth: true,
+					click() {
+						usersListSorting("asc");
+					}
+				},
+				{
+					view: "button",
+					value: "Sort desc",
+					css: "webix_primary",
+					autowidth: true,
+					click() {
+						usersListSorting("desc");
+					}
+				},
+				{
+					view: "button",
+					value: "Add new",
+					css: "webix_primary",
+					autowidth: true,
+					click() {
+						let obj = {};
+						obj.name = usersToList.data.pull[randomInteger(1, 12)].name;
+						obj.age = randomInteger(1, 100);
+						obj.country = countries.data.pull[randomInteger(1, countries.data.order.length)].value;
+						usersToList.add(obj);
 					}
 				}
-			},
-			{
-				view: "button",
-				value: "Sort asc",
-				css: "webix_primary",
-				autowidth: true,
-				click() {
-					usersListSorting("asc");
+			],
+		},
+		{
+			view: "editlist",
+			id: 'users_list',
+			template: "#name#, #age#, from #country# <span class='remove-btn'>X</span>",
+			editable: true,
+			editor: "text",
+			editValue: "name",
+			onClick: {
+				"remove-btn"(e, id) {
+					usersToList.remove(id);
+					return false;
 				}
 			},
-			{
-				view: "button",
-				value: "Sort desc",
-				css: "webix_primary",
-				autowidth: true,
-				click() {
-					usersListSorting("desc");
-				}
-			},
-			{
-				view: "button",
-				value: "Add new",
-				css: "webix_primary",
-				autowidth: true,
-				click() {
-					let obj = {};
-					obj.name = newUsersToList.data.pull[randomInteger(1, newUsersToList.data.order.length)].name;
-					obj.age = randomInteger(1, 100);
-					obj.country = countries.data.pull[randomInteger(1, countries.data.order.length)].value;
-					$$("users_list").add(obj);
-				}
-			}
-		],
-	},
-	{
-		view: "editlist",
-		id: 'users_list',
-		url: "data/users.js",
-		template: "#name#, #age#, from #country# <span class='remove-btn'>X</span>",
-		editable: true,
-		editor: "text",
-		editValue: "name",
-		onClick: {
-			"remove-btn"(e, id) {
-				this.remove(id);
-				return false;
+			rules: {
+				"name": webix.rules.isNotEmpty
 			}
 		},
-		scheme: {
-			$init(obj) {
-				if (obj.age < 26) {
-					obj.$css = "users_list_highlight";
-				}
-			}
-		},
-		rules: {
-			"name": webix.rules.isNotEmpty
-		}
-	},
 	]
 }
 
@@ -309,12 +302,64 @@ let products = {
 	}
 };
 
+let admin = {
+	rows: [
+		{
+			view: "datatable",
+			id: "admin_table",
+			columns: [
+				{ id: "id", header: "ID" },
+				{ id: "value", header: "Value", editor: "text", fillspace: true }
+			],
+			editable: true,
+			editaction: "dblclick",
+			autoheight: true,
+			scroll: "y",
+			select: true
+		},
+		{
+			view: "toolbar",
+			css: "webix_primary",
+			cols: [
+				{
+					view: "text",
+					id: "admin_input"
+				},
+				{
+					view: "button",
+					value: "Add item",
+					click() {
+						const input = $$("admin_input");
+						const inputValue = input.getValue();
+						if (inputValue !== "") {
+							jenre.add({ id: jenre.data.order.length + 1, value: inputValue });
+							input.setValue("");
+						}
+					}
+				},
+				{
+					view: "button",
+					value: "Remove selected",
+					click() {
+						const selectedID = $$("admin_table").getSelectedId();
+						if (selectedID) {
+							jenre.remove(selectedID)
+						}
+					}
+				}
+			],
+		},
+		{}
+	]
+
+}
+
 let main = {
 	cells: [
 		{ id: "Dashboard", cols: [mainDataTable, mainForm] },
 		{ id: "Users", rows: [usersList, usersChart] },
 		{ id: "Products", rows: [products] },
-		{ id: "Admin" }
+		{ id: "Admin", rows: [admin] }
 	]
 }
 
@@ -351,16 +396,26 @@ webix.ui({
 })
 
 $$("main_form").bind($$("main_data"));
+$$("admin_table").sync(jenre);
+
+const users_list = $$("users_list");
+users_list.sync(usersToList);
+users_list.attachEvent("onBeforeRender", () => {
+	for (let i = 1; i < usersToList.data.order.length; i++) {
+		if (usersToList.data.pull[usersToList.data.order[i]].age < 26)
+			usersToList.data.pull[usersToList.data.order[i]].$css = "users_list_highlight";
+	}
+})
 
 const users_chart = $$("users_chart");
-users_chart.sync($$("users_list"), function () {
+users_chart.sync(users_list, function () {
 	users_chart.group({
 		by: "country",
 		map: {
 			country: ["country", "count"]
 		}
 	},
-	users_chart.sort("country", "asc")
+		users_chart.sort("country", "asc")
 	)
 });
 

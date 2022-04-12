@@ -11,6 +11,13 @@ function randomInteger(min, max) {
 	return Math.floor(rand);
 }
 
+function randomItemInCollection(collection) {
+	const ind = randomInteger(0, collection.count() - 1);
+	const id = collection.getIdByIndex(ind);
+	const sourceItem = collection.getItem(id);
+	return sourceItem
+}
+
 const usersListSorting = (type) => {
 	$$("users_list").sort("name", type, "string");
 }
@@ -239,9 +246,9 @@ let usersList = {
 					autowidth: true,
 					click() {
 						let obj = {};
-						obj.name = usersCollection.data.pull[randomInteger(1, 12)].name;
+						obj.name = randomItemInCollection(usersCollection).name;
 						obj.age = randomInteger(1, 100);
-						obj.country = countries.data.pull[randomInteger(1, countries.data.order.length)].value;
+						obj.country = randomItemInCollection(countries).value;
 						usersCollection.add(obj);
 					}
 				}

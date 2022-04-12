@@ -11,6 +11,12 @@ function randomInteger(min, max) {
 	return Math.floor(rand);
 }
 
+function renameId() {
+	for (let i = 0; i < jenre.data.order.length; i++) {
+		jenre.data.changeId(jenre.data.order[i], i + 1);
+	}
+}
+
 const usersListSorting = (type) => {
 	$$("users_list").sort("name", type, "string");
 }
@@ -332,6 +338,7 @@ let admin = {
 						const input = $$("admin_input");
 						const inputValue = input.getValue();
 						if (inputValue !== "") {
+							renameId();
 							jenre.add({ id: jenre.data.order.length + 1, value: inputValue });
 							input.setValue("");
 						}
@@ -345,6 +352,7 @@ let admin = {
 						if (selectedID) {
 							jenre.remove(selectedID)
 						}
+						renameId();
 					}
 				}
 			],
@@ -402,7 +410,7 @@ const users_list = $$("users_list");
 users_list.sync(usersCollection);
 users_list.attachEvent("onBeforeRender", () => {
 	for (let i = 1; i < usersCollection.data.order.length; i++) {
-	const oneOfUser = usersCollection.data.pull[usersCollection.data.order[i]];
+		const oneOfUser = usersCollection.data.pull[usersCollection.data.order[i]];
 		if (oneOfUser.age < 26)
 			oneOfUser.$css = "users_list_highlight";
 	}

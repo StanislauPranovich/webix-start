@@ -402,8 +402,9 @@ const users_list = $$("users_list");
 users_list.sync(usersToList);
 users_list.attachEvent("onBeforeRender", () => {
 	for (let i = 1; i < usersToList.data.order.length; i++) {
-		if (usersToList.data.pull[usersToList.data.order[i]].age < 26)
-			usersToList.data.pull[usersToList.data.order[i]].$css = "users_list_highlight";
+	const oneOfUser = usersToList.data.pull[usersToList.data.order[i]];
+		if (oneOfUser.age < 26)
+			oneOfUser.$css = "users_list_highlight";
 	}
 })
 

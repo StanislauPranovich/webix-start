@@ -23,7 +23,7 @@ const countries = new webix.DataCollection({
 	url: "extra-js/countries.js",
 })
 
-const usersToList = new webix.DataCollection({
+const usersCollection = new webix.DataCollection({
 	url: "data/users.js"
 })
 
@@ -233,10 +233,10 @@ let usersList = {
 					autowidth: true,
 					click() {
 						let obj = {};
-						obj.name = usersToList.data.pull[randomInteger(1, 12)].name;
+						obj.name = usersCollection.data.pull[randomInteger(1, 12)].name;
 						obj.age = randomInteger(1, 100);
 						obj.country = countries.data.pull[randomInteger(1, countries.data.order.length)].value;
-						usersToList.add(obj);
+						usersCollection.add(obj);
 					}
 				}
 			],
@@ -250,7 +250,7 @@ let usersList = {
 			editValue: "name",
 			onClick: {
 				"remove-btn"(e, id) {
-					usersToList.remove(id);
+					usersCollection.remove(id);
 					return false;
 				}
 			},
@@ -399,10 +399,10 @@ $$("main_form").bind($$("main_data"));
 $$("admin_table").sync(jenre);
 
 const users_list = $$("users_list");
-users_list.sync(usersToList);
+users_list.sync(usersCollection);
 users_list.attachEvent("onBeforeRender", () => {
-	for (let i = 1; i < usersToList.data.order.length; i++) {
-	const oneOfUser = usersToList.data.pull[usersToList.data.order[i]];
+	for (let i = 1; i < usersCollection.data.order.length; i++) {
+	const oneOfUser = usersCollection.data.pull[usersCollection.data.order[i]];
 		if (oneOfUser.age < 26)
 			oneOfUser.$css = "users_list_highlight";
 	}

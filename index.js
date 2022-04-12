@@ -11,12 +11,6 @@ function randomInteger(min, max) {
 	return Math.floor(rand);
 }
 
-function renameId() {
-	for (let i = 0; i < jenre.data.order.length; i++) {
-		jenre.data.changeId(jenre.data.order[i], i + 1);
-	}
-}
-
 const usersListSorting = (type) => {
 	$$("users_list").sort("name", type, "string");
 }
@@ -30,7 +24,16 @@ const countries = new webix.DataCollection({
 })
 
 const usersCollection = new webix.DataCollection({
-	url: "data/users.js"
+	url: "data/users.js",
+	scheme: {
+		$init() {
+			for (let i = 1; i < usersCollection.data.order.length; i++) {
+				const oneOfUser = usersCollection.data.pull[usersCollection.data.order[i]];
+				if (oneOfUser.age < 26)
+					oneOfUser.$css = "users_list_highlight";
+			}
+		}
+	}
 })
 
 let header = {
@@ -314,7 +317,6 @@ let admin = {
 			view: "datatable",
 			id: "admin_table",
 			columns: [
-				{ id: "id", header: "ID" },
 				{ id: "value", header: "Value", editor: "text", fillspace: true }
 			],
 			editable: true,
@@ -338,8 +340,7 @@ let admin = {
 						const input = $$("admin_input");
 						const inputValue = input.getValue();
 						if (inputValue !== "") {
-							renameId();
-							jenre.add({ id: jenre.data.order.length + 1, value: inputValue });
+							jenre.add({ value: inputValue });
 							input.setValue("");
 						}
 					}
@@ -352,7 +353,6 @@ let admin = {
 						if (selectedID) {
 							jenre.remove(selectedID)
 						}
-						renameId();
 					}
 				}
 			],
@@ -408,16 +408,9 @@ $$("admin_table").sync(jenre);
 
 const users_list = $$("users_list");
 users_list.sync(usersCollection);
-users_list.attachEvent("onBeforeRender", () => {
-	for (let i = 1; i < usersCollection.data.order.length; i++) {
-		const oneOfUser = usersCollection.data.pull[usersCollection.data.order[i]];
-		if (oneOfUser.age < 26)
-			oneOfUser.$css = "users_list_highlight";
-	}
-})
 
 const users_chart = $$("users_chart");
-users_chart.sync(users_list, function () {
+users_chart.sync(usersCollection, function () {
 	users_chart.group({
 		by: "country",
 		map: {

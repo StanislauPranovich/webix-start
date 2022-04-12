@@ -26,12 +26,9 @@ const countries = new webix.DataCollection({
 const usersCollection = new webix.DataCollection({
 	url: "data/users.js",
 	scheme: {
-		$init() {
-			for (let i = 1; i < usersCollection.data.order.length; i++) {
-				const oneOfUser = usersCollection.data.pull[usersCollection.data.order[i]];
-				if (oneOfUser.age < 26)
-					oneOfUser.$css = "users_list_highlight";
-			}
+		$init(obj) {
+			if (obj.age < 26)
+				obj.$css = "users_list_highlight";
 		}
 	}
 })
